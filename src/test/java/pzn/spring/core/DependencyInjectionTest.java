@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import pzn.spring.core.configuration.DependencyInjectionConfiguration;
 import pzn.spring.core.data.Bar;
 import pzn.spring.core.data.Foo;
@@ -23,6 +22,7 @@ public class DependencyInjectionTest {
     @Test
     void testWithDI() {
         Foo foo = context.getBean(Foo.class);
+        Foo fooSecond = context.getBean("fooSecond", Foo.class);
         Bar bar = context.getBean(Bar.class);
 
         FooBar fooBar = context.getBean(FooBar.class);
@@ -32,8 +32,13 @@ public class DependencyInjectionTest {
 
         Assertions.assertNotNull(fooBar);
 
-        Assertions.assertSame(foo, fooBar.getFoo());
+        // A line below became error, because the left foo is Primary foo or foo first
+        // but the right foo is foo second
+        // Assertions.assertSame(foo, fooBar.getFoo());
+
         Assertions.assertSame(bar, fooBar.getBar());
+        Assertions.assertSame(fooSecond, fooBar.getFoo());
+        Assertions.assertNotSame(foo, fooBar.getFoo());
     }
 
     @Test
